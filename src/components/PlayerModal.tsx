@@ -80,7 +80,8 @@ export default function PlayerModal({ mode, dance, subtitle, onClose, onUploaded
   const toggle = () => {
     const el = audio.current;
     if (!el) return;
-    if (el.paused) el.play().catch((e: Error) => setError(e.message));
+    // Pausing or closing before the song starts cancels play() with an AbortError. That's expected, not a failure.
+    if (el.paused) el.play().catch((e: Error) => e.name !== "AbortError" && setError(e.message));
     else el.pause();
   };
 
